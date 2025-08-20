@@ -1,5 +1,6 @@
 import sys
 import pygame
+from score import Score
 from constants import *
 from player import Player
 from asteroid import Asteroid
@@ -26,6 +27,9 @@ def main():
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
     dt = 0
 
+    Score.containers = (updatable, drawable)
+    score = Score(10, 10)
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -42,15 +46,19 @@ def main():
                 if asteroid.check_collisions(shot):
                     shot.kill()
                     asteroid.split()
+                    # incrementando +1 ponto sempre que destruir algum asteroide
+                    score.add_points(1)
 
         screen.fill("black")
 
         for objects in drawable:
             objects.draw(screen)
 
+        # garantindo que o score vai aparecer acima de tudo
+        screen.blit(score.image, score.rect)
+
         pygame.display.flip()
-        #Limitando o fps para 60 frames por segundo
-        dt = fps.tick(60) / 1000
+        dt = fps.tick(60) / 1000 # Limitando o fps para 60 frames por segundo
 
 if __name__ == "__main__":
     main()
